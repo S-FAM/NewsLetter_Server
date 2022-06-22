@@ -10,6 +10,7 @@ class Server:
         lambda version, sentence: f"""{version} 200 OK
 Content-Type: application/json; charset=utf-8
 Connection: close
+
 {sentence}"""
     )
 
