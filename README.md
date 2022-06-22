@@ -1,2 +1,11 @@
 # NewsLetter_Server
-뉴스 스크래퍼 및 서버입니다.
+
+## 파이썬 버전
+
+- 3.8~
+
+## 필요 라이브러리
+
+- selenium
+- requests
+- BeautifulSoup
