@@ -77,21 +77,26 @@ class Server:
                 print(f"Connected by {addr}")
 
             recv_data = conn.recv(1024).decode("utf-8")
-            splited_data = recv_data.split()
+            refined_data = self.__data_to_dict(recv_data)
 
             # access failed
-            if not self.__access_check(splited_data[0]):
-                conn.send(Server.response_method_not_allowed(splited_data[2]).encode())
+            if not self.__access_check(refined_data["method"]):
+                conn.send(
+                    Server.response_method_not_allowed(refined_data["version"]).encode()
+                )
+
             # access success
             else:
                 if verbose:
                     print(f"===Received===\n{recv_data}")
-                    print(splited_data)
+                    print(refined_data)
 
-                sentence = self.__get_news_list(splited_data[1])
-                results = Server.response_ok(splited_data[2], sentence).encode()
-                print(f"===Sending===\n{results.decode()}")
-                conn.send(results)
+                sentence = self.__get_news_list(refined_data["path"])
+                results = Server.response_ok(refined_data["version"], sentence).encode()
+
+                if verbose:
+                    print(f"===Sending===\n{results}")
+                conn.send(results.encode())
 
             conn.close()
             print(f"Disconnected by {addr}")
