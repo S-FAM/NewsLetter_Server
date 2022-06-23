@@ -7,11 +7,7 @@ class Server:
         lambda version: f"{version} 405 Method Not Allowed\n\nYou must use GET method"
     )
     response_ok = (
-        lambda version, sentence: f"""{version} 200 OK
-Content-Type: application/json; charset=utf-8
-Connection: close
-
-{sentence}"""
+        lambda version, sentence: f"{version} 200 OK\nContent-Type: application/json; charset=utf-8\nConnection: close\n\n{sentence}"
     )
 
     def __init__(self):
