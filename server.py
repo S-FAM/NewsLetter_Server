@@ -1,4 +1,6 @@
+from urllib.parse import unquote
 from socket import *
+import pandas as pd
 
 
 class Server:
@@ -43,19 +45,21 @@ class Server:
         refined_dict["version"] = data[0].split()[2]
 
         for line in data[1:]:
-            if line == "":
+            line = line.rstrip()
+            if not line:
                 continue
+
             key, value = line.split(": ")
             refined_dict[key] = value
 
         return refined_dict
 
-    def __get_news_list(self, data: str):
+    def __get_news_list(self, path: str, start: int, count: int):
         """
         저장된 뉴스 리스트를 json으로 반환하는 함수
         """
-        # TODO: 저장된 뉴스 리스트를 json으로 반환하는 함수를 작성해야합니다.
-        return "{암튼 json 형식임}"
+        df = pd.read_csv(f"{path}.csv", delimiter="|", on_bad_lines="skip")
+        return df.iloc[start : start + count].to_json(orient="records")
 
     def __access_check(self, data: str) -> bool:
         data = data.split()
@@ -77,6 +81,10 @@ class Server:
                 print(f"Connected by {addr}")
 
             recv_data = conn.recv(1024).decode("utf-8")
+
+            if verbose:
+                print(f"===Received===\n{recv_data}")
+
             refined_data = self.__data_to_dict(recv_data)
 
             # access failed
@@ -88,11 +96,14 @@ class Server:
             # access success
             else:
                 if verbose:
-                    print(f"===Received===\n{recv_data}")
                     print(refined_data)
 
-                sentence = self.__get_news_list(refined_data["path"])
-                results = Server.response_ok(refined_data["version"], sentence).encode()
+                sentence = self.__get_news_list(
+                    refined_data["path"],
+                    int(refined_data["startIndex"]),
+                    int(refined_data["count"]),
+                )
+                results = Server.response_ok(refined_data["version"], sentence)
 
                 if verbose:
                     print(f"===Sending===\n{results}")
