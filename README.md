@@ -8,4 +8,6 @@
 
 - selenium
 - requests
+- socket
 - BeautifulSoup
+- pandas
