@@ -39,7 +39,7 @@ class Server:
         refined_dict = {}
         data = data.split("\n")
         refined_dict["method"] = data[0].split()[0]
-        refined_dict["path"] = data[0].split()[1]
+        refined_dict["path"] = unquote(data[0].split()[1])[1:]
         refined_dict["version"] = data[0].split()[2]
 
         for line in data[1:]:
