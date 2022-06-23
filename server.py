@@ -32,6 +32,24 @@ class Server:
         """
         return self.sock.accept()
 
+    def __data_to_dict(self, data) -> dict:
+        """
+        전달받은 데이터를 딕셔너리로 변환하는 함수
+        """
+        refined_dict = {}
+        data = data.split("\n")
+        refined_dict["method"] = data[0].split()[0]
+        refined_dict["path"] = data[0].split()[1]
+        refined_dict["version"] = data[0].split()[2]
+
+        for line in data[1:]:
+            if line == "":
+                continue
+            key, value = line.split(": ")
+            refined_dict[key] = value
+
+        return refined_dict
+
     def __get_news_list(self, data: str):
         """
         저장된 뉴스 리스트를 json으로 반환하는 함수
